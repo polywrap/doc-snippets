@@ -1,5 +1,5 @@
 # doc-snippets
-Doc-snippets is a simple tool that allows you to extract and inject snippets from code into markdown files.
+`doc-snippets` is a simple tool that allows you to extract and inject snippets from code into markdown files.
 
 ## Installation
 
@@ -15,18 +15,24 @@ yarn add -D doc-snippets
 
 ## Usage
 
-Exported functions:
+`doc-snippets` comes with a CLI tool which should handle most scenarios.
 
-```typescript
-extractSnippets(dir: string) //Returns a `Record<string, string>` of all snippets found within `dir`.
+The CLI `combine` is the only currently supported command, and can be used as follows:
 
-injectSnippets(snippets: Record<string, string>, dir: string) //Injects `snippets` into .md files found inside `dir`
-```
-
-```
-polywrap-snippet-tools combine <snippetsDir> <docsDir> <outputDir>
+```bash
+doc-snippets combine <snippetsDir> <docsDir> <outputDir>
 
 # Example used within the documentation package
 # Extracts snippets from ./snippets and outputs a copy of ./src/docs into ./docs with injected snippets
-polywrap-snippet-tools combine ./snippets ./src/docs ./docs
+doc-snippets combine ./snippets ./src/docs ./docs
+```
+
+If you want to use `doc-snippets` programatically, it offers two exported functions:
+
+```typescript
+import { extractSnippets, injectSnippets } from "doc-snippets"
+
+const snippets = await extractSnippets("./snippets") //Returns a `Record<string, string>` of all snippets found within `./snippets`.
+
+await injectSnippets(snippets, "./dest") //Injects `snippets` into .md files found inside `./dest`
 ```

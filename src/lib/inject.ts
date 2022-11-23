@@ -5,12 +5,12 @@ import fs from "fs";
  * Inject snippets into .md files within a directory
  * @param {Record<string, string>} snippets - The snippets to inject
  * @param {string} dir - The directory containing .md files
- * @returns 
+ * @returns
  */
 export async function injectSnippets(
   snippets: Record<string, string>,
   dir: string
-) {
+): Promise<void> {
   const dirents = fs.readdirSync(dir, { withFileTypes: true });
 
   // Only search specific types of files
@@ -22,7 +22,7 @@ export async function injectSnippets(
       }
     }
     return false;
-  }
+  };
 
   for (const dirent of dirents) {
     const direntPath = path.join(dir, dirent.name);
@@ -60,10 +60,7 @@ async function injectSnippetIntoFile(
       throw Error(`Unknown Snippet: ${name} in ${filePath}`);
     }
 
-    contents = contents.replace(
-      `${marker}${name}\n`,
-      `${snippets[name]}\n`
-    );
+    contents = contents.replace(`${marker}${name}\n`, `${snippets[name]}\n`);
     console.log("- Inject Snippet", name, "into", filePath);
 
     modified = true;
@@ -71,10 +68,6 @@ async function injectSnippetIntoFile(
   }
 
   if (modified) {
-    fs.writeFileSync(
-      filePath,
-      contents,
-      "utf-8"
-    );
+    fs.writeFileSync(filePath, contents, "utf-8");
   }
 }

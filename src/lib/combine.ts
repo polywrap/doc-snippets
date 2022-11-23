@@ -1,13 +1,14 @@
-import * as fse from 'fs-extra';
-import fs from 'fs';
-import { extractSnippets } from './extract';
-import { injectSnippets } from './inject';
+import { extractSnippets } from "./extract";
+import { injectSnippets } from "./inject";
+
+import * as fse from "fs-extra";
+import fs from "fs";
 
 export async function combineDocsAndSnippets(
   snippetsDir: string,
   docsDir: string,
   outputDir: string
-) {
+): Promise<void> {
   console.log(`- Copy ${docsDir} to ${outputDir}`);
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
@@ -15,10 +16,10 @@ export async function combineDocsAndSnippets(
 
   fse.copySync(docsDir, outputDir, { overwrite: true });
 
-  console.log('- Extract Snippets');
+  console.log("- Extract Snippets");
   const snippets = await extractSnippets(snippetsDir);
 
-  console.log('- Inject Snippets');
+  console.log("- Inject Snippets");
   await injectSnippets(snippets, outputDir);
 
   console.log(

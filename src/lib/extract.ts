@@ -1,10 +1,10 @@
-import path from 'path';
-import fs from 'fs';
+import path from "path";
+import fs from "fs";
 
 /**
  * Extract snippets from all files within a directory
  * @param {string} dir - The directory to search and extract snippets from
- * @returns 
+ * @returns
  */
 export async function extractSnippets(
   dir: string
@@ -23,10 +23,10 @@ async function searchAndExtractSnippetsFromDir(
   const dirents = fs.readdirSync(dir, { withFileTypes: true });
 
   // Only search specific types of files
-  const exts = ['.ts', '.json', '.yaml', '.txt', '.md', '.graphql', '.cue'];
+  const exts = [".ts", ".json", ".yaml", ".txt", ".md", ".graphql", ".cue"];
 
   // Ignore specific directories
-  const filter = ['node_modules'];
+  const filter = ["node_modules"];
 
   const match = (str: string, tests: string[]) => {
     for (const test of tests) {
@@ -52,12 +52,12 @@ async function extractSnippetsFromFile(
   snippets: Record<string, string>,
   filePath: string
 ) {
-  const contents = fs.readFileSync(filePath, 'utf-8');
+  const contents = fs.readFileSync(filePath, "utf-8");
   let index = 0;
 
   while (index < contents.length) {
-    const start = '$start: ';
-    const end = '$end';
+    const start = "$start: ";
+    const end = "$end";
     const startIdx = contents.indexOf(start, index);
 
     if (startIdx < 0) {
@@ -66,17 +66,14 @@ async function extractSnippetsFromFile(
     }
 
     const nameStartIdx = startIdx + start.length;
-    const nameEndIdx = contents.indexOf('\n', nameStartIdx);
+    const nameEndIdx = contents.indexOf("\n", nameStartIdx);
     const name = contents.substr(nameStartIdx, nameEndIdx - nameStartIdx);
 
     const snippetStartIdx = nameEndIdx + 1;
     let snippetEndIdx = contents.indexOf(end, snippetStartIdx);
 
     // Walk back from the $end until we hit the first \n
-    while (true) {
-      if (contents[snippetEndIdx] === '\n') {
-        break;
-      }
+    while (contents[snippetEndIdx] !== "\n") {
       snippetEndIdx -= 1;
     }
 
@@ -85,7 +82,7 @@ async function extractSnippetsFromFile(
       snippetEndIdx - snippetStartIdx
     );
 
-    console.log('- Extract Snippet', name);
+    console.log("- Extract Snippet", name);
 
     if (snippets[name]) {
       throw Error(`Duplicate Snippet Definition: ${name}`);

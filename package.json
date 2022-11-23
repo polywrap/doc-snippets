@@ -28,11 +28,20 @@
   "scripts": {
     "build": "npx rimraf ./build && tsc --project tsconfig.build.json",
     "clean": "npx rimraf ./build ./node_modules",
-    "reset": "yarn clean && yarn && yarn build"
+    "reset": "yarn clean && yarn && yarn build",
+    "lint": "yarn eslint .",
+    "lint:fix": "yarn eslint --fix ."
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/rimraf": "3.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.0",
     "rimraf": "3.0.2",
     "ts-node": "10.7.0",
     "typescript": "4.6.4"

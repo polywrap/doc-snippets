@@ -15,7 +15,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pileks/doc-snippets.git"
+    "url": "https://github.com/polywrap/doc-snippets.git"
   },
   "main": "build/index.js",
   "files": [

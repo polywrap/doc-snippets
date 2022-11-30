@@ -42,6 +42,12 @@ doc-snippets combine <snippetsDir> <docsDir> <outputDir>
 doc-snippets combine ./snippets ./src/docs ./docs
 ```
 
+#### Options
+
+- `-i, --ignore <paths...>` - Ignore listed paths. Paths should be formatted according to the (gitignore spec 2.22.1))[https://git-scm.com/docs/gitignore/2.22.1]
+
+### In your own code
+
 If you want to use `doc-snippets` programatically, it offers two exported functions:
 
 ```typescript

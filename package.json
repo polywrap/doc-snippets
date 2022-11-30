@@ -1,6 +1,6 @@
 {
   "name": "doc-snippets",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Extract and inject snippets from code into markdown files",
   "author": {
     "name": "Pileks",
@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "commander": "^9.4.1",
-    "fs-extra": "^10.1.0"
+    "fs-extra": "^10.1.0",
+    "ignore": "^5.2.1"
   }
 }

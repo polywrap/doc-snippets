@@ -3,9 +3,7 @@ import { combineDocsAndSnippets } from "./lib/combine";
 import { program } from "commander";
 
 export const run = async (argv: string[]): Promise<void> => {
-  program
-    .name("polywrap-snippet-tools")
-    .description("Tools for Polywrap Documentation snippets.");
+  program.name("doc-snippets").description("Tools for documentation snippets.");
 
   program
     .command("combine")
@@ -15,9 +13,17 @@ export const run = async (argv: string[]): Promise<void> => {
     .argument("<snippetsDir>", "The snippets directory")
     .argument("<docsDir>", "The documentation directory")
     .argument("<outputDir>", "The output directory")
-    .action(async (snippetsDir: string, docsDir: string, outputDir: string) => {
-      await combineDocsAndSnippets(snippetsDir, docsDir, outputDir);
-    });
+    .option("-i, --ignore <paths...>", "Ignore specified paths")
+    .action(
+      async (
+        snippetsDir: string,
+        docsDir: string,
+        outputDir: string,
+        { ignore }
+      ) => {
+        await combineDocsAndSnippets(snippetsDir, docsDir, outputDir, ignore);
+      }
+    );
 
   await program.parseAsync(argv);
 };

@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import ignore, { Ignore } from "ignore";
 
 /**
  * Extract snippets from all files within a directory
@@ -7,18 +8,26 @@ import fs from "fs";
  * @returns
  */
 export async function extractSnippets(
-  dir: string
+  dir: string,
+  ignorePaths?: string[]
 ): Promise<Record<string, string>> {
   const snippets: Record<string, string> = {};
 
-  await searchAndExtractSnippetsFromDir(snippets, dir);
+  const ignoreInstance = ignore();
+
+  if (ignorePaths) {
+    ignoreInstance.add(ignorePaths);
+  }
+
+  await searchAndExtractSnippetsFromDir(snippets, dir, ignoreInstance);
 
   return snippets;
 }
 
 async function searchAndExtractSnippetsFromDir(
   snippets: Record<string, string>,
-  dir: string
+  dir: string,
+  ignoreInstance: Ignore
 ) {
   const dirents = fs.readdirSync(dir, { withFileTypes: true });
 
@@ -40,10 +49,18 @@ async function searchAndExtractSnippetsFromDir(
   for (const dirent of dirents) {
     const direntPath = path.join(dir, dirent.name);
 
+    if (ignoreInstance.test(direntPath).ignored) {
+      continue;
+    }
+
     if (dirent.isFile() && match(dirent.name, exts)) {
       await extractSnippetsFromFile(snippets, direntPath);
     } else if (dirent.isDirectory() && !match(dirent.name, filter)) {
-      await searchAndExtractSnippetsFromDir(snippets, direntPath);
+      await searchAndExtractSnippetsFromDir(
+        snippets,
+        direntPath,
+        ignoreInstance
+      );
     }
   }
 }

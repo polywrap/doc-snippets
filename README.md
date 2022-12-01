@@ -24,9 +24,6 @@ yarn add -D doc-snippets
 - To inject a snippet:
   - `"$snippet: snippet-name"` - This gets replaced by the snippet with the given name.
 
-Currently, `doc-snippets` extracts snippets from the following file types:
-`.ts`, `.json`, `.yaml`, `.txt`, `.md`, `.graphql`, and `.cue`.
-
 Snippets are injected only into `.md` files.
 
 ### Running `doc-snippets`
@@ -45,6 +42,10 @@ doc-snippets combine ./snippets ./src/docs ./docs
 #### Options
 
 - `-i, --ignore <paths...>` - Ignore listed paths. Paths should be formatted according to the [gitignore spec 2.22.1](https://git-scm.com/docs/gitignore/2.22.1)
+  - By default, only `node_modules` is ignored.
+
+- `-e, --exts <exts...>` - Parse files with listed extensions
+  - By default, files with the following extensions are parsed: `.ts`, `.json`, `.yaml`, `.txt`, `.md`, `.graphql`, and `.cue`
 
 ### In your own code
 

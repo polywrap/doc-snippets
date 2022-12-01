@@ -1,25 +1,43 @@
+import { defaultParseExts, defaultIgnorePaths } from "./defaults";
+
 import path from "path";
 import fs from "fs";
 import ignore, { Ignore } from "ignore";
 
 /**
+ * @typedef ExtractSnippetsOptions
+ * @type {object}
+ * @property {string[]} [parseExts] A list of file extensions which will be parsed for Snippets
+ * @property {string[]} [ignorePaths] A list of paths in `gitignore` format which will be ignored when parsing
+ */
+type ExtractSnippetsOptions = {
+  parseExts?: string[];
+  ignorePaths?: string[];
+};
+
+/**
  * Extract snippets from all files within a directory
- * @param {string} dir - The directory to search and extract snippets from
- * @returns
+ * @param {string} dir The directory to search and extract snippets from
+ * @param {ExtractSnippetsOptions} options Extraction options
+ * @returns {Record<string, string>} A Record containing all extracted Snippets
  */
 export async function extractSnippets(
   dir: string,
-  ignorePaths?: string[]
+  options?: ExtractSnippetsOptions
 ): Promise<Record<string, string>> {
   const snippets: Record<string, string> = {};
 
   const ignoreInstance = ignore();
 
-  if (ignorePaths) {
-    ignoreInstance.add(ignorePaths);
+  if (options?.ignorePaths) {
+    ignoreInstance.add(options.ignorePaths);
+  } else {
+    ignoreInstance.add(defaultIgnorePaths);
   }
 
-  await searchAndExtractSnippetsFromDir(snippets, dir, ignoreInstance);
+  const exts = options?.parseExts ?? defaultParseExts;
+
+  await searchAndExtractSnippetsFromDir(snippets, dir, exts, ignoreInstance);
 
   return snippets;
 }
@@ -27,15 +45,10 @@ export async function extractSnippets(
 async function searchAndExtractSnippetsFromDir(
   snippets: Record<string, string>,
   dir: string,
+  exts: string[],
   ignoreInstance: Ignore
 ) {
   const dirents = fs.readdirSync(dir, { withFileTypes: true });
-
-  // Only search specific types of files
-  const exts = [".ts", ".json", ".yaml", ".txt", ".md", ".graphql", ".cue"];
-
-  // Ignore specific directories
-  const filter = ["node_modules"];
 
   const match = (str: string, tests: string[]) => {
     for (const test of tests) {
@@ -55,10 +68,11 @@ async function searchAndExtractSnippetsFromDir(
 
     if (dirent.isFile() && match(dirent.name, exts)) {
       await extractSnippetsFromFile(snippets, direntPath);
-    } else if (dirent.isDirectory() && !match(dirent.name, filter)) {
+    } else if (dirent.isDirectory()) {
       await searchAndExtractSnippetsFromDir(
         snippets,
         direntPath,
+        exts,
         ignoreInstance
       );
     }

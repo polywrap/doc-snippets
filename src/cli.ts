@@ -14,14 +14,21 @@ export const run = async (argv: string[]): Promise<void> => {
     .argument("<docsDir>", "The documentation directory")
     .argument("<outputDir>", "The output directory")
     .option("-i, --ignore <paths...>", "Ignore specified paths")
+    .option("-e, --exts <exts...>", "Extensions to parse")
     .action(
       async (
         snippetsDir: string,
         docsDir: string,
         outputDir: string,
-        { ignore }
+        { ignore, exts }
       ) => {
-        await combineDocsAndSnippets(snippetsDir, docsDir, outputDir, ignore);
+        await combineDocsAndSnippets(
+          snippetsDir,
+          docsDir,
+          outputDir,
+          exts,
+          ignore
+        );
       }
     );
 

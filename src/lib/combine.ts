@@ -8,6 +8,7 @@ export async function combineDocsAndSnippets(
   snippetsDir: string,
   docsDir: string,
   outputDir: string,
+  parseExts?: string[],
   ignorePaths?: string[]
 ): Promise<void> {
   console.log(`- Copy ${docsDir} to ${outputDir}`);
@@ -18,7 +19,10 @@ export async function combineDocsAndSnippets(
   fse.copySync(docsDir, outputDir, { overwrite: true });
 
   console.log("- Extract Snippets");
-  const snippets = await extractSnippets(snippetsDir, ignorePaths);
+  const snippets = await extractSnippets(snippetsDir, {
+    parseExts,
+    ignorePaths,
+  });
 
   console.log("- Inject Snippets");
   await injectSnippets(snippets, outputDir);

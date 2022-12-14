@@ -97,10 +97,19 @@ async function extractSnippetsFromFile(
     }
 
     const nameStartIdx = startIdx + start.length;
-    const nameEndIdx = contents.indexOf("\n", nameStartIdx);
-    const name = contents.substr(nameStartIdx, nameEndIdx - nameStartIdx);
+    const lineEndIdx = contents.indexOf("\n", nameStartIdx);
+    
+    // Find end of snippet name. This is either the end of the line, 
+    // or the first occurence of a space after the snippet's name starts.
+    let nameEndIdx = contents.indexOf(" ", nameStartIdx);
+    if(nameEndIdx < 0 || nameEndIdx > lineEndIdx){
+      nameEndIdx = lineEndIdx;
+    }
+    
+    const name = contents.substring(nameStartIdx, nameEndIdx);
+    //  contents.substr(nameStartIdx, nameEndIdx - nameStartIdx);
 
-    const snippetStartIdx = nameEndIdx + 1;
+    const snippetStartIdx = lineEndIdx + 1;
     let snippetEndIdx = contents.indexOf(end, snippetStartIdx);
 
     // Walk back from the $end until we hit the first \n

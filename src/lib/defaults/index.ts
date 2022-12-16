@@ -1,2 +1,1 @@
-export * from "./defaultIgnorePaths";
-export * from "./defaultParseExts";
+export * from './defaultDocSnippetsConfig';

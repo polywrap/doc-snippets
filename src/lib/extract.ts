@@ -1,85 +1,23 @@
-import { defaultParseExts, defaultIgnorePaths } from "./defaults";
-
-import path from "path";
 import fs from "fs";
-import ignore, { Ignore } from "ignore";
+import path from "path";
+import { SearchOptions } from "./types";
+import { searchFiles } from "./utils";
 
-/**
- * @typedef ExtractSnippetsOptions
- * @type {object}
- * @property {string[]} [parseExts] A list of file extensions which will be parsed for Snippets
- * @property {string[]} [ignorePaths] A list of paths in `gitignore` format which will be ignored when parsing
- */
-type ExtractSnippetsOptions = {
-  parseExts?: string[];
-  ignorePaths?: string[];
-};
-
-/**
- * Extract snippets from all files within a directory
- * @param {string} dir The directory to search and extract snippets from
- * @param {ExtractSnippetsOptions} options Extraction options
- * @returns {Record<string, string>} A Record containing all extracted Snippets
- */
 export async function extractSnippets(
-  dir: string,
-  options?: ExtractSnippetsOptions
+  options: SearchOptions
 ): Promise<Record<string, string>> {
   const snippets: Record<string, string> = {};
 
-  const ignoreInstance = ignore();
-
-  if (options?.ignorePaths) {
-    ignoreInstance.add(options.ignorePaths);
-  } else {
-    ignoreInstance.add(defaultIgnorePaths);
+  const filePaths = searchFiles(options);
+  
+  for (const filePath of filePaths) {
+    extractSnippetsFromFile(snippets, path.join(options.dir, filePath));
   }
-
-  const exts = options?.parseExts ?? defaultParseExts;
-
-  await searchAndExtractSnippetsFromDir(snippets, dir, exts, ignoreInstance);
 
   return snippets;
 }
 
-async function searchAndExtractSnippetsFromDir(
-  snippets: Record<string, string>,
-  dir: string,
-  exts: string[],
-  ignoreInstance: Ignore
-) {
-  const dirents = fs.readdirSync(dir, { withFileTypes: true });
-
-  const match = (str: string, tests: string[]) => {
-    for (const test of tests) {
-      if (str.indexOf(test) > -1) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  for (const dirent of dirents) {
-    const direntPath = path.join(dir, dirent.name);
-
-    if (ignoreInstance.test(direntPath).ignored) {
-      continue;
-    }
-
-    if (dirent.isFile() && match(dirent.name, exts)) {
-      await extractSnippetsFromFile(snippets, direntPath);
-    } else if (dirent.isDirectory()) {
-      await searchAndExtractSnippetsFromDir(
-        snippets,
-        direntPath,
-        exts,
-        ignoreInstance
-      );
-    }
-  }
-}
-
-async function extractSnippetsFromFile(
+export async function extractSnippetsFromFile(
   snippets: Record<string, string>,
   filePath: string
 ) {
@@ -98,14 +36,14 @@ async function extractSnippetsFromFile(
 
     const nameStartIdx = startIdx + start.length;
     const lineEndIdx = contents.indexOf("\n", nameStartIdx);
-    
-    // Find end of snippet name. This is either the end of the line, 
+
+    // Find end of snippet name. This is either the end of the line,
     // or the first occurence of a space after the snippet's name starts.
     let nameEndIdx = contents.indexOf(" ", nameStartIdx);
-    if(nameEndIdx < 0 || nameEndIdx > lineEndIdx){
+    if (nameEndIdx < 0 || nameEndIdx > lineEndIdx) {
       nameEndIdx = lineEndIdx;
     }
-    
+
     const name = contents.substring(nameStartIdx, nameEndIdx);
     //  contents.substr(nameStartIdx, nameEndIdx - nameStartIdx);
 
@@ -117,9 +55,9 @@ async function extractSnippetsFromFile(
       snippetEndIdx -= 1;
     }
 
-    const snippet = contents.substr(
+    const snippet = contents.substring(
       snippetStartIdx,
-      snippetEndIdx - snippetStartIdx
+      snippetEndIdx
     );
 
     console.log("- Extract Snippet", name);

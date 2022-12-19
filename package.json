@@ -30,7 +30,10 @@
     "clean": "npx rimraf ./build ./node_modules",
     "reset": "yarn clean && yarn && yarn build",
     "lint": "yarn eslint .",
-    "lint:fix": "yarn eslint --fix ."
+    "lint:fix": "yarn eslint --fix .",
+    "publish:npm": "yarn publish --access public --non-interactive --verbose",
+    "publish:pre:npm": "yarn publish --access public --non-interactive --verbose --tag pre",
+    "version:apply": "yarn version --new-version $(cat VERSION) --no-git-tag-version"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",

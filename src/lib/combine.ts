@@ -1,33 +1,44 @@
 import { extractSnippets } from "./extract";
-import { injectSnippets } from "./inject";
+import { injectSnippetsIntoFile as injectSnippetsIntoFile } from "./inject";
 
-import * as fse from "fs-extra";
 import fs from "fs";
+import path from "path";
+import { DocSnippetsConfig } from "./types";
+import { searchFiles } from "./utils";
 
 export async function combineDocsAndSnippets(
-  snippetsDir: string,
-  docsDir: string,
-  outputDir: string,
-  parseExts?: string[],
-  ignorePaths?: string[]
+  config: DocSnippetsConfig
 ): Promise<void> {
-  console.log(`- Copy ${docsDir} to ${outputDir}`);
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
+  console.log("- Extract Snippets");
+
+  const snippets = await extractSnippets(config.extract);
+
+  console.log(`- Copy files from ${config.inject.dir} to ${config.outputDir}`);
+
+  if (!fs.existsSync(config.outputDir)) {
+    fs.mkdirSync(config.outputDir);
   }
 
-  fse.copySync(docsDir, outputDir, { overwrite: true });
+  const injectableFiles = searchFiles(config.inject);
 
-  console.log("- Extract Snippets");
-  const snippets = await extractSnippets(snippetsDir, {
-    parseExts,
-    ignorePaths,
-  });
+  for (const file of injectableFiles) {
+    const srcFilePath = path.join(config.inject.dir, file);
+    const dstFilePath = path.join(config.outputDir, file);
 
-  console.log("- Inject Snippets");
-  await injectSnippets(snippets, outputDir);
+    console.log(`- Copy ${srcFilePath} to ${dstFilePath}`);
+
+    await fs.promises.cp(srcFilePath, dstFilePath, { recursive: true });
+  }
+
+  console.log("- Inject snippets");
+
+  for (const file of injectableFiles) {
+    const filePath = path.join(config.outputDir, file);
+
+    await injectSnippetsIntoFile(snippets, filePath);
+  }
 
   console.log(
-    `Successfully combined documentation and snippets into ${outputDir}`
+    `Successfully combined documentation and snippets into ${config.outputDir}`
   );
 }

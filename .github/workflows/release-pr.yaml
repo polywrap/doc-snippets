@@ -95,7 +95,7 @@ jobs:
       - name: Building Release PR...
         uses: actions/github-script@0.8.0
         with:
-          github-token: ${{secrets.POLYWRAP_BUILD_BOT_PAT}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.createComment({
               issue_number: context.issue.number,
@@ -154,7 +154,7 @@ jobs:
       - name: Release PR Created...
         uses: actions/github-script@0.8.0
         with:
-          github-token: ${{secrets.POLYWRAP_BUILD_BOT_PAT}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             github.issues.createComment({
               issue_number: context.issue.number,

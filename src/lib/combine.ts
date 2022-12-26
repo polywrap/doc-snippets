@@ -11,7 +11,11 @@ export async function combineDocsAndSnippets(
 ): Promise<void> {
   console.log("- Extract Snippets");
 
-  const snippets = await extractSnippets(config.extract);
+  const snippets = await extractSnippets(
+    config.extract,
+    config.startToken,
+    config.endToken
+  );
 
   console.log(`- Copy files from ${config.inject.dir} to ${config.outputDir}`);
 
@@ -35,7 +39,7 @@ export async function combineDocsAndSnippets(
   for (const file of injectableFiles) {
     const filePath = path.join(config.outputDir, file);
 
-    await injectSnippetsIntoFile(snippets, filePath);
+    await injectSnippetsIntoFile(snippets, filePath, config.injectToken);
   }
 
   console.log(

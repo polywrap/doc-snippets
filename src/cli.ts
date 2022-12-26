@@ -15,6 +15,9 @@ type CombineOptions = {
   injectDir?: string;
   injectInclude?: string[];
   injectIgnore?: string[];
+  startToken?: string,
+  endToken?: string,
+  injectToken?: string,
 };
 
 export const run = async (argv: string[]): Promise<void> => {
@@ -54,11 +57,25 @@ export const run = async (argv: string[]): Promise<void> => {
       "--inject-ignore <paths...>",
       "Ignore specified paths or glob patterns in snippet injection"
     )
+    .option(
+      "--start-token <token>",
+      "Token marking the start of the snippet"
+    )
+    .option(
+      "--end-token <token>",
+      "Token marking the end of the snippet"
+    )
+    .option(
+      "--inject-token <token>",
+      "Token marking the point of snippet injection"
+    )
     .action(async (options: CombineOptions) => {
       const configFilePath = options.config ?? "./package.json";
       const config = parseDocSnippetsConfig(configFilePath);
 
       applyCommandOptionsToConfig(options, config);
+      console.log("OPTIONS", options)
+      console.log("CONFIG", config)
 
       await combineDocsAndSnippets(config);
     });
@@ -88,6 +105,9 @@ function parseDocSnippetsConfig(configFilePath: string): DocSnippetsConfig {
       include:
         config.inject?.include ?? defaultDocSnippetsConfig.inject.include,
     },
+    startToken: config.startToken ?? defaultDocSnippetsConfig.startToken,
+    endToken: config.endToken ?? defaultDocSnippetsConfig.endToken,
+    injectToken: config.injectToken ?? defaultDocSnippetsConfig.injectToken,
     outputDir: config.outputDir ?? defaultDocSnippetsConfig.outputDir,
   };
 
@@ -105,6 +125,10 @@ function applyCommandOptionsToConfig(
   config.inject.dir = options.extractDir ?? config.inject.dir;
   config.inject.include = options.extractInclude ?? config.inject.include;
   config.inject.ignore = options.extractIgnore ?? config.inject.ignore;
+
+  config.startToken = options.startToken ?? config.startToken;
+  config.endToken = options.endToken ?? config.endToken;
+  config.injectToken = options.injectToken ?? config.injectToken;
 
   config.outputDir = options.outputDir ?? config.outputDir;
 }

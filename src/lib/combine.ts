@@ -1,10 +1,10 @@
 import { extractSnippets } from "./extract";
 import { injectSnippetsIntoFile as injectSnippetsIntoFile } from "./inject";
+import { DocSnippetsConfig } from "./types";
+import { searchFiles } from "./utils";
 
 import fs from "fs";
 import path from "path";
-import { DocSnippetsConfig } from "./types";
-import { searchFiles } from "./utils";
 
 export async function combineDocsAndSnippets(
   config: DocSnippetsConfig

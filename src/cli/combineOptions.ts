@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 export const combineOptions: Record<string, string> = {
   "-c --config <path>":
     "Path to configuration file (default: './package.json')",

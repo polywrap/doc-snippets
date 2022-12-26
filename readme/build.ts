@@ -1,8 +1,8 @@
-import fs from "fs";
-import path from "path";
-
 import { combineOptions } from "../src/cli";
 import { injectSnippetsIntoFile } from "../src/lib/inject";
+
+import fs from "fs";
+import path from "path";
 
 const snippets: Record<string, string> = {};
 
@@ -19,4 +19,6 @@ const destFilePath = path.join(__dirname, "../README.md");
 
 fs.copyFileSync(sourceFilePath, destFilePath);
 
-injectSnippetsIntoFile(snippets, destFilePath, "%snippet: ");
+injectSnippetsIntoFile(snippets, destFilePath, "%snippet: ").catch(() => {
+  process.exit(1);
+});

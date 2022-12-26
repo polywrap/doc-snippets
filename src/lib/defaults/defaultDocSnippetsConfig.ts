@@ -14,5 +14,5 @@ export const defaultDocSnippetsConfig: DocSnippetsConfig = {
   startToken: "$start: ",
   endToken: "$end",
   injectToken: "$snippet: ",
-  outputDir: "./docs"
-}
+  outputDir: "./docs",
+};

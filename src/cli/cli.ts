@@ -1,11 +1,10 @@
 import { combineDocsAndSnippets } from "../lib/combine";
 import { DocSnippetsConfig, PartialDocSnippetsConfig } from "../lib/types";
-
-import { program } from "commander";
-
-import fs from "fs";
 import { defaultDocSnippetsConfig } from "../lib/defaults";
 import { combineOptions } from "./combineOptions";
+
+import { program } from "commander";
+import fs from "fs";
 
 type CombineOptions = {
   config?: string;

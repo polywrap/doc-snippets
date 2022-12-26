@@ -1,7 +1,8 @@
-import fs from "fs";
-import path from "path";
 import { SearchOptions } from "./types";
 import { searchFiles } from "./utils";
+
+import fs from "fs";
+import path from "path";
 
 export async function extractSnippets(
   options: SearchOptions,
@@ -13,7 +14,7 @@ export async function extractSnippets(
   const filePaths = searchFiles(options);
 
   for (const filePath of filePaths) {
-    extractSnippetsFromFile(
+    await extractSnippetsFromFile(
       snippets,
       path.join(options.dir, filePath),
       snippetStartToken,
@@ -29,7 +30,7 @@ export async function extractSnippetsFromFile(
   filePath: string,
   snippetStartToken: string,
   snippetEndToken: string
-) {
+): Promise<void> {
   const contents = fs.readFileSync(filePath, "utf-8");
   let index = 0;
 

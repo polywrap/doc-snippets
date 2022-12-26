@@ -16,4 +16,4 @@ export type PartialDocSnippetsConfig = {
   endToken?: string;
   injectToken?: string;
   outputDir?: string;
-}
+};

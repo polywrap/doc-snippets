@@ -1,10 +1,11 @@
-import { combineDocsAndSnippets } from "./lib/combine";
-import { DocSnippetsConfig, PartialDocSnippetsConfig } from "./lib/types";
+import { combineDocsAndSnippets } from "../lib/combine";
+import { DocSnippetsConfig, PartialDocSnippetsConfig } from "../lib/types";
 
 import { program } from "commander";
 
 import fs from "fs";
-import { defaultDocSnippetsConfig } from "./lib/defaults";
+import { defaultDocSnippetsConfig } from "../lib/defaults";
+import { combineOptions } from "./combineOptions";
 
 type CombineOptions = {
   config?: string;
@@ -15,70 +16,34 @@ type CombineOptions = {
   injectDir?: string;
   injectInclude?: string[];
   injectIgnore?: string[];
-  startToken?: string,
-  endToken?: string,
-  injectToken?: string,
+  startToken?: string;
+  endToken?: string;
+  injectToken?: string;
 };
 
 export const run = async (argv: string[]): Promise<void> => {
   program.name("doc-snippets").description("Tools for documentation snippets.");
 
-  program
+  const combineCommand = program
     .command("combine")
     .description(
       "Extract snippets and output documentation files with snippets injected."
-    )
-    .option(
-      "-c --config <path>",
-      "Path to configuration file (default: './package.json')"
-    )
-    .option("-o --output-dir <path>", "Combined documentation output directory")
-    .option(
-      "--extract-dir <path>",
-      "The base directory within which to search for snippets"
-    )
-    .option(
-      "--extract-include <paths...>",
-      "Include specified paths or glob patterns in snippet extraction"
-    )
-    .option(
-      "--extract-ignore <paths...>",
-      "Ignore specified paths or glob patterns in snippet extraction"
-    )
-    .option(
-      "--inject-dir <path>",
-      "The base directory within which to search for injectable files"
-    )
-    .option(
-      "--inject-include <paths...>",
-      "Include specified paths or glob patterns in snippet injection"
-    )
-    .option(
-      "--inject-ignore <paths...>",
-      "Ignore specified paths or glob patterns in snippet injection"
-    )
-    .option(
-      "--start-token <token>",
-      "Token marking the start of the snippet"
-    )
-    .option(
-      "--end-token <token>",
-      "Token marking the end of the snippet"
-    )
-    .option(
-      "--inject-token <token>",
-      "Token marking the point of snippet injection"
-    )
-    .action(async (options: CombineOptions) => {
-      const configFilePath = options.config ?? "./package.json";
-      const config = parseDocSnippetsConfig(configFilePath);
+    );
 
-      applyCommandOptionsToConfig(options, config);
-      console.log("OPTIONS", options)
-      console.log("CONFIG", config)
+  for (const option in combineOptions) {
+    combineCommand.option(option, combineOptions[option]);
+  }
 
-      await combineDocsAndSnippets(config);
-    });
+  combineCommand.action(async (options: CombineOptions) => {
+    const configFilePath = options.config ?? "./package.json";
+    const config = parseDocSnippetsConfig(configFilePath);
+
+    applyCommandOptionsToConfig(options, config);
+    console.log("OPTIONS", options);
+    console.log("CONFIG", config);
+
+    await combineDocsAndSnippets(config);
+  });
 
   await program.parseAsync(argv);
 };

@@ -1,0 +1,11 @@
+foo text
+
+$start: valid-snippet
+Hello Polywrap!
+$end
+
+$start: valid-snippet
+Hello Duplicate!
+$end
+
+bar text

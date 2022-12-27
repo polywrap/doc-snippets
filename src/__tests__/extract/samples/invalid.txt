@@ -1,0 +1,7 @@
+foo text
+
+#start-invalid: valid-snippet
+Hello Polywrap!
+#end-invalid
+
+bar text

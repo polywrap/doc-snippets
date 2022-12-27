@@ -1,2 +1,2 @@
-export * from './docSnippetsConfig';
-export * from './searchOptions';
+export * from "./docSnippetsConfig";
+export * from "./searchOptions";

@@ -26,7 +26,8 @@
     "doc-snippets": "bin/doc-snippets"
   },
   "scripts": {
-    "build": "npx rimraf ./build && tsc --project tsconfig.build.json",
+    "build": "npx rimraf ./build && tsc --project tsconfig.build.json && yarn build:readme",
+    "build:readme": "ts-node ./readme/build.ts",
     "clean": "npx rimraf ./build ./node_modules",
     "reset": "yarn clean && yarn && yarn build",
     "lint": "yarn eslint .",

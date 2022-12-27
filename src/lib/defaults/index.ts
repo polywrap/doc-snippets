@@ -1,1 +1,1 @@
-export * from './defaultDocSnippetsConfig';
+export * from "./defaultDocSnippetsConfig";

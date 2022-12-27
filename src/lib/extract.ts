@@ -1,17 +1,25 @@
-import fs from "fs";
-import path from "path";
 import { SearchOptions } from "./types";
 import { searchFiles } from "./utils";
 
+import fs from "fs";
+import path from "path";
+
 export async function extractSnippets(
-  options: SearchOptions
+  options: SearchOptions,
+  snippetStartToken: string,
+  snippetEndToken: string
 ): Promise<Record<string, string>> {
   const snippets: Record<string, string> = {};
 
   const filePaths = searchFiles(options);
-  
+
   for (const filePath of filePaths) {
-    extractSnippetsFromFile(snippets, path.join(options.dir, filePath));
+    await extractSnippetsFromFile(
+      snippets,
+      path.join(options.dir, filePath),
+      snippetStartToken,
+      snippetEndToken
+    );
   }
 
   return snippets;
@@ -19,22 +27,22 @@ export async function extractSnippets(
 
 export async function extractSnippetsFromFile(
   snippets: Record<string, string>,
-  filePath: string
-) {
+  filePath: string,
+  snippetStartToken: string,
+  snippetEndToken: string
+): Promise<void> {
   const contents = fs.readFileSync(filePath, "utf-8");
   let index = 0;
 
   while (index < contents.length) {
-    const start = "$start: ";
-    const end = "$end";
-    const startIdx = contents.indexOf(start, index);
+    const startIdx = contents.indexOf(snippetStartToken, index);
 
     if (startIdx < 0) {
       index = contents.length;
       continue;
     }
 
-    const nameStartIdx = startIdx + start.length;
+    const nameStartIdx = startIdx + snippetStartToken.length;
     const lineEndIdx = contents.indexOf("\n", nameStartIdx);
 
     // Find end of snippet name. This is either the end of the line,
@@ -48,17 +56,14 @@ export async function extractSnippetsFromFile(
     //  contents.substr(nameStartIdx, nameEndIdx - nameStartIdx);
 
     const snippetStartIdx = lineEndIdx + 1;
-    let snippetEndIdx = contents.indexOf(end, snippetStartIdx);
+    let snippetEndIdx = contents.indexOf(snippetEndToken, snippetStartIdx);
 
     // Walk back from the $end until we hit the first \n
     while (contents[snippetEndIdx] !== "\n") {
       snippetEndIdx -= 1;
     }
 
-    const snippet = contents.substring(
-      snippetStartIdx,
-      snippetEndIdx
-    );
+    const snippet = contents.substring(snippetStartIdx, snippetEndIdx);
 
     console.log("- Extract Snippet", name);
 
@@ -68,6 +73,6 @@ export async function extractSnippetsFromFile(
 
     snippets[name] = snippet;
 
-    index = snippetEndIdx + end.length;
+    index = snippetEndIdx + snippetEndToken.length;
   }
 }

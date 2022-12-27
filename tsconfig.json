@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "lib": [
-      "es2020",
-      "es2015",
-      "es5",
-    ],
+    "lib": ["es2020", "es2015", "es5"],
     "outDir": "build",
     "downlevelIteration": true,
     "experimentalDecorators": true,
@@ -25,7 +21,5 @@
     "resolveJsonModule": true,
     "strictNullChecks": true
   },
-  "include": [
-    "./src/**/*"
-  ],
+  "include": ["./src/**/*", "./readme/**/*.ts"]
 }

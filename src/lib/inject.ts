@@ -2,22 +2,22 @@ import fs from "fs";
 
 export async function injectSnippetsIntoFile(
   snippets: Record<string, string>,
-  filePath: string
-) {
+  filePath: string,
+  injectToken: string
+): Promise<void> {
   let contents = fs.readFileSync(filePath, "utf-8");
   let modified = false;
   let index = 0;
 
   while (index < contents.length) {
-    const marker = "$snippet: ";
-    const markerIdx = contents.indexOf(marker, index);
+    const markerIdx = contents.indexOf(injectToken, index);
 
     if (markerIdx < 0) {
       index = contents.length;
       continue;
     }
 
-    const nameStartIdx = markerIdx + marker.length;
+    const nameStartIdx = markerIdx + injectToken.length;
     const nameEndIdx = contents.indexOf("\n", nameStartIdx);
     const name = contents.substring(nameStartIdx, nameEndIdx);
 
@@ -25,7 +25,10 @@ export async function injectSnippetsIntoFile(
       throw Error(`Unknown Snippet: ${name} in ${filePath}`);
     }
 
-    contents = contents.replace(`${marker}${name}\n`, `${snippets[name]}\n`);
+    contents = contents.replace(
+      `${injectToken}${name}\n`,
+      `${snippets[name]}\n`
+    );
     console.log("- Inject Snippet", name, "into", filePath);
 
     modified = true;

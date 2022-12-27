@@ -1,5 +1,6 @@
-import glob from "glob";
 import { SearchOptions, SearchPattern } from "../types";
+
+import glob from "glob";
 
 export function searchFiles(options: SearchOptions): string[] {
   let results: string[];

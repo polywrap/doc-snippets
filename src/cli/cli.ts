@@ -1,10 +1,10 @@
-import { combineDocsAndSnippets } from "./lib/combine";
-import { DocSnippetsConfig, PartialDocSnippetsConfig } from "./lib/types";
+import { combineDocsAndSnippets } from "../lib/combine";
+import { DocSnippetsConfig, PartialDocSnippetsConfig } from "../lib/types";
+import { defaultDocSnippetsConfig } from "../lib/defaults";
+import { combineOptions } from "./combineOptions";
 
 import { program } from "commander";
-
 import fs from "fs";
-import { defaultDocSnippetsConfig } from "./lib/defaults";
 
 type CombineOptions = {
   config?: string;
@@ -15,53 +15,34 @@ type CombineOptions = {
   injectDir?: string;
   injectInclude?: string[];
   injectIgnore?: string[];
+  startToken?: string;
+  endToken?: string;
+  injectToken?: string;
 };
 
 export const run = async (argv: string[]): Promise<void> => {
   program.name("doc-snippets").description("Tools for documentation snippets.");
 
-  program
+  const combineCommand = program
     .command("combine")
     .description(
       "Extract snippets and output documentation files with snippets injected."
-    )
-    .option(
-      "-c --config <path>",
-      "Path to configuration file (default: './package.json')"
-    )
-    .option("-o --output-dir <path>", "Combined documentation output directory")
-    .option(
-      "--extract-dir <path>",
-      "The base directory within which to search for snippets"
-    )
-    .option(
-      "--extract-include <paths...>",
-      "Include specified paths or glob patterns in snippet extraction"
-    )
-    .option(
-      "--extract-ignore <paths...>",
-      "Ignore specified paths or glob patterns in snippet extraction"
-    )
-    .option(
-      "--inject-dir <path>",
-      "The base directory within which to search for injectable files"
-    )
-    .option(
-      "--inject-include <paths...>",
-      "Include specified paths or glob patterns in snippet injection"
-    )
-    .option(
-      "--inject-ignore <paths...>",
-      "Ignore specified paths or glob patterns in snippet injection"
-    )
-    .action(async (options: CombineOptions) => {
-      const configFilePath = options.config ?? "./package.json";
-      const config = parseDocSnippetsConfig(configFilePath);
+    );
 
-      applyCommandOptionsToConfig(options, config);
+  for (const option in combineOptions) {
+    combineCommand.option(option, combineOptions[option]);
+  }
 
-      await combineDocsAndSnippets(config);
-    });
+  combineCommand.action(async (options: CombineOptions) => {
+    const configFilePath = options.config ?? "./package.json";
+    const config = parseDocSnippetsConfig(configFilePath);
+
+    applyCommandOptionsToConfig(options, config);
+    console.log("OPTIONS", options);
+    console.log("CONFIG", config);
+
+    await combineDocsAndSnippets(config);
+  });
 
   await program.parseAsync(argv);
 };
@@ -88,6 +69,9 @@ function parseDocSnippetsConfig(configFilePath: string): DocSnippetsConfig {
       include:
         config.inject?.include ?? defaultDocSnippetsConfig.inject.include,
     },
+    startToken: config.startToken ?? defaultDocSnippetsConfig.startToken,
+    endToken: config.endToken ?? defaultDocSnippetsConfig.endToken,
+    injectToken: config.injectToken ?? defaultDocSnippetsConfig.injectToken,
     outputDir: config.outputDir ?? defaultDocSnippetsConfig.outputDir,
   };
 
@@ -105,6 +89,10 @@ function applyCommandOptionsToConfig(
   config.inject.dir = options.extractDir ?? config.inject.dir;
   config.inject.include = options.extractInclude ?? config.inject.include;
   config.inject.ignore = options.extractIgnore ?? config.inject.ignore;
+
+  config.startToken = options.startToken ?? config.startToken;
+  config.endToken = options.endToken ?? config.endToken;
+  config.injectToken = options.injectToken ?? config.injectToken;
 
   config.outputDir = options.outputDir ?? config.outputDir;
 }

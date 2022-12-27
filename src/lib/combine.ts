@@ -1,17 +1,21 @@
 import { extractSnippets } from "./extract";
 import { injectSnippetsIntoFile as injectSnippetsIntoFile } from "./inject";
+import { DocSnippetsConfig } from "./types";
+import { searchFiles } from "./utils";
 
 import fs from "fs";
 import path from "path";
-import { DocSnippetsConfig } from "./types";
-import { searchFiles } from "./utils";
 
 export async function combineDocsAndSnippets(
   config: DocSnippetsConfig
 ): Promise<void> {
   console.log("- Extract Snippets");
 
-  const snippets = await extractSnippets(config.extract);
+  const snippets = await extractSnippets(
+    config.extract,
+    config.startToken,
+    config.endToken
+  );
 
   console.log(`- Copy files from ${config.inject.dir} to ${config.outputDir}`);
 
@@ -35,7 +39,7 @@ export async function combineDocsAndSnippets(
   for (const file of injectableFiles) {
     const filePath = path.join(config.outputDir, file);
 
-    await injectSnippetsIntoFile(snippets, filePath);
+    await injectSnippetsIntoFile(snippets, filePath, config.injectToken);
   }
 
   console.log(

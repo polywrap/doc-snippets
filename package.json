@@ -34,7 +34,8 @@
     "lint:fix": "yarn eslint --fix .",
     "publish:npm": "yarn publish --access public --non-interactive --verbose",
     "publish:pre:npm": "yarn publish --access public --non-interactive --verbose --tag pre",
-    "version:apply": "yarn version --new-version $(cat VERSION) --no-git-tag-version"
+    "version:apply": "yarn version --new-version $(cat VERSION) --no-git-tag-version",
+    "test": "jest --passWithNoTests --runInBand --verbose"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",

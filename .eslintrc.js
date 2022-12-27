@@ -8,6 +8,9 @@ module.exports = {
   ignorePatterns: [
     "**/__tests__/**/*.*",
     ".eslintrc.js",
+    "jest.config.ts",
+    "jest.setup.ts",
+    "coverage",
     "build"
   ],
   parser: "@typescript-eslint/parser",

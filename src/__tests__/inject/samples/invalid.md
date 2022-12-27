@@ -1,0 +1,1 @@
+$snippet: invalid-snippet

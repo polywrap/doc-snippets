@@ -23,7 +23,10 @@ export async function injectSnippetsIntoFile(
     const firstSpaceIdx = contents.indexOf(" ", nameStartIdx);
 
     // Either there's no newline, or the 1st space char appears earlier than the newline.
-    if (snippetEndIdx == -1 || (firstSpaceIdx > 0 && snippetEndIdx > firstSpaceIdx)) {
+    if (
+      snippetEndIdx == -1 ||
+      (firstSpaceIdx > 0 && snippetEndIdx > firstSpaceIdx)
+    ) {
       snippetEndIdx = firstSpaceIdx;
     }
 

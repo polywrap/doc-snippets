@@ -1,0 +1,1 @@
+$snippet: valid-snippet foobar

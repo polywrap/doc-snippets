@@ -9,6 +9,8 @@ describe("Inject tests", () => {
     const tempDir = path.join(__dirname, ".temp");
 
     const validMdFilePath = path.join(tempDir, "valid.md");
+    const eolMdFilePath = path.join(tempDir, "eol.md");
+    const spaceMdFilePath = path.join(tempDir, "space.md");
     const invalidMdFilePath = path.join(tempDir, "invalid.md");
 
     const injectionToken = "$snippet: ";
@@ -27,7 +29,7 @@ describe("Inject tests", () => {
       fs.rmSync(tempDir, { recursive: true });
     });
 
-    it("should inject snippets into a file with a valid snippet token", async () => {
+    it("should inject snippets into a file with a valid snippet token ending in a newline", async () => {
       await injectSnippetsIntoFile(
         sampleSnippets,
         validMdFilePath,
@@ -38,6 +40,33 @@ describe("Inject tests", () => {
 
       expect(contents).toContain(sampleSnippets["valid-snippet"]);
       expect(contents).toContain(altInjectionToken);
+      expect(contents).not.toContain(sampleSnippets["nonexistent-snippet"]);
+    });
+
+    it("should inject snippets into a file with a valid snippet token ending with a space", async () => {
+      await injectSnippetsIntoFile(
+        sampleSnippets,
+        spaceMdFilePath,
+        injectionToken
+      );
+
+      const contents = fs.readFileSync(spaceMdFilePath, { encoding: "utf-8" });
+
+      expect(contents).toContain(sampleSnippets["valid-snippet"]);
+      expect(contents).toContain("foobar");
+      expect(contents).not.toContain(sampleSnippets["nonexistent-snippet"]);
+    });
+
+    it("should inject snippets into a file with a valid snippet token located at the end of the file", async () => {
+      await injectSnippetsIntoFile(
+        sampleSnippets,
+        eolMdFilePath,
+        injectionToken
+      );
+
+      const contents = fs.readFileSync(eolMdFilePath, { encoding: "utf-8" });
+
+      expect(contents).toContain(sampleSnippets["valid-snippet"]);
       expect(contents).not.toContain(sampleSnippets["nonexistent-snippet"]);
     });
 

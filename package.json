@@ -1,6 +1,6 @@
 {
   "name": "doc-snippets",
-  "version": "0.4.0-pre.1",
+  "version": "0.4.0-pre.2",
   "description": "Extract and inject snippets from code into markdown files",
   "author": {
     "name": "Pileks",

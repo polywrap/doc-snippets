@@ -1,5 +1,9 @@
 import { combineDocsAndSnippets } from "../lib/combine";
-import { DocSnippetsConfig, PartialDocSnippetsConfig } from "../lib/types";
+import {
+  DocSnippetsConfig,
+  ExtractionToken,
+  PartialDocSnippetsConfig,
+} from "../lib/types";
 import { defaultDocSnippetsConfig } from "../lib/defaults";
 import { combineOptions } from "./combineOptions";
 
@@ -15,8 +19,10 @@ type CombineOptions = {
   injectDir?: string;
   injectInclude?: string[];
   injectIgnore?: string[];
-  startToken?: string;
-  endToken?: string;
+  startTokens?: string[];
+  endTokens?: string[];
+  inlineStartTokens?: string[];
+  inlineEndTokens?: string[];
   injectToken?: string;
 };
 
@@ -35,11 +41,11 @@ export const run = async (argv: string[]): Promise<void> => {
 
   combineCommand.action(async (options: CombineOptions) => {
     const configFilePath = options.config ?? "./package.json";
-    const config = parseDocSnippetsConfig(configFilePath);
+    const config = parseDocSnippetsConfigFile(configFilePath);
 
     applyCommandOptionsToConfig(options, config);
-    console.log("OPTIONS", options);
-    console.log("CONFIG", config);
+
+    console.log("CONFIG:", config);
 
     await combineDocsAndSnippets(config);
   });
@@ -47,7 +53,7 @@ export const run = async (argv: string[]): Promise<void> => {
   await program.parseAsync(argv);
 };
 
-function parseDocSnippetsConfig(configFilePath: string): DocSnippetsConfig {
+function parseDocSnippetsConfigFile(configFilePath: string): DocSnippetsConfig {
   const configFileContents = fs.readFileSync(configFilePath, {
     encoding: "utf-8",
   });
@@ -69,8 +75,8 @@ function parseDocSnippetsConfig(configFilePath: string): DocSnippetsConfig {
       include:
         config.inject?.include ?? defaultDocSnippetsConfig.inject.include,
     },
-    startToken: config.startToken ?? defaultDocSnippetsConfig.startToken,
-    endToken: config.endToken ?? defaultDocSnippetsConfig.endToken,
+    startTokens: config.startTokens ?? defaultDocSnippetsConfig.startTokens,
+    endTokens: config.endTokens ?? defaultDocSnippetsConfig.endTokens,
     injectToken: config.injectToken ?? defaultDocSnippetsConfig.injectToken,
     outputDir: config.outputDir ?? defaultDocSnippetsConfig.outputDir,
   };
@@ -90,8 +96,30 @@ function applyCommandOptionsToConfig(
   config.inject.include = options.extractInclude ?? config.inject.include;
   config.inject.ignore = options.extractIgnore ?? config.inject.ignore;
 
-  config.startToken = options.startToken ?? config.startToken;
-  config.endToken = options.endToken ?? config.endToken;
+  if (options.startTokens ?? options.inlineStartTokens) {
+    const tokens: ExtractionToken[] = [];
+
+    for (const token of options.startTokens ?? []) {
+      tokens.push({ pattern: token, inline: false });
+    }
+
+    for (const token of options.inlineStartTokens ?? []) {
+      tokens.push({ pattern: token, inline: true });
+    }
+  }
+
+  if (options.endTokens ?? options.inlineEndTokens) {
+    const tokens: ExtractionToken[] = [];
+
+    for (const token of options.endTokens ?? []) {
+      tokens.push({ pattern: token, inline: false });
+    }
+
+    for (const token of options.inlineEndTokens ?? []) {
+      tokens.push({ pattern: token, inline: true });
+    }
+  }
+
   config.injectToken = options.injectToken ?? config.injectToken;
 
   config.outputDir = options.outputDir ?? config.outputDir;

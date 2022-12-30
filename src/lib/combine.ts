@@ -13,8 +13,8 @@ export async function combineDocsAndSnippets(
 
   const snippets = await extractSnippets(
     config.extract,
-    config.startToken,
-    config.endToken
+    config.startTokens,
+    config.endTokens
   );
 
   console.log(`- Copy files from ${config.inject.dir} to ${config.outputDir}`);

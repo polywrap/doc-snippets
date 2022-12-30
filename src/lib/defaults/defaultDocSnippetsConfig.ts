@@ -11,8 +11,8 @@ export const defaultDocSnippetsConfig: DocSnippetsConfig = {
     include: "./**/*.md",
     ignore: "./**/node_modules/**",
   },
-  startToken: "$start: ",
-  endToken: "$end",
+  startTokens: [{ pattern: "$start: ", inline: false }],
+  endTokens: [{ pattern: "$end", inline: false }],
   injectToken: "$snippet: ",
   outputDir: "./docs",
 };

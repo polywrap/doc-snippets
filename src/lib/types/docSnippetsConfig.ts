@@ -1,10 +1,10 @@
-import { SearchOptions } from ".";
+import { ExtractionToken, SearchOptions } from ".";
 
 export type DocSnippetsConfig = {
   extract: SearchOptions;
   inject: SearchOptions;
-  startToken: string;
-  endToken: string;
+  startTokens: ExtractionToken[];
+  endTokens: ExtractionToken[];
   injectToken: string;
   outputDir: string;
 };
@@ -12,8 +12,8 @@ export type DocSnippetsConfig = {
 export type PartialDocSnippetsConfig = {
   extract?: Partial<SearchOptions>;
   inject?: Partial<SearchOptions>;
-  startToken?: string;
-  endToken?: string;
+  startTokens?: ExtractionToken[];
+  endTokens?: ExtractionToken[];
   injectToken?: string;
   outputDir?: string;
 };

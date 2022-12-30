@@ -1,0 +1,18 @@
+$start: regular-start-regular-end comment one two three
+this is a snippet using regular start and end tokens
+and it extends to a new line
+$end
+
+/* $start: inline-start-regular-end */this is a snippet
+using an inline start token and a regular end token
+and it extends to a new line
+$end
+
+$start: regular-start-inline-end
+this is a snippet
+using a regular start token and an inline end token
+and it extends to a new line/* $end */
+
+/* $start: inline-start-inline-end */ this is a snippet
+using inline start and end tokens
+and it extends to a new line/* $end */

@@ -23,9 +23,15 @@ export const combineOptions: Record<string, string> = {
   "--inject-ignore <paths...>":
     "Ignore specified paths or glob patterns in snippet injection",
 
-  "--start-token <token>": "Token marking the start of the snippet",
+  "--start-tokens <tokens...>": "Tokens marking the start of the snippet",
 
-  "--end-token <token>": "Token marking the end of the snippet",
+  "--end-tokens <tokens...>": "Tokens marking the end of the snippet",
+
+  "--inline-start-tokens <tokens...>":
+    "Inline Tokens marking the start of the snippet",
+
+  "--inline-end-tokens <tokens...>":
+    "Inline Tokens marking the end of the snippet",
 
   "--inject-token <token>": "Token marking the point of snippet injection",
 };

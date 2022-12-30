@@ -4,8 +4,8 @@ $start: valid-snippet
 Hello Polywrap!
 $end
 
-$start: valid-snippet-with-comment #!@this is a comment
+// $start: valid-snippet-with-comment #!@this is a comment
 Hello Comment!
-$end
+// $end
 
 bar text

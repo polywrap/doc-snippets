@@ -30,7 +30,7 @@ yarn add -D doc-snippets
 
 ## Configuration
 
-`doc-snippets` is, by defaut, configured using a JSON file that contains a `doc-snippets` object. By default, this file is `package.json`.
+The `doc-snippets` CLI is configured using a JSON file that contains a `doc-snippets` object. By default, this file is `package.json`.
 
 The configuration object has the following structure (and default values):
 
@@ -172,6 +172,25 @@ For reference:
 - When a **regular end token** is encountered, snippet extraction ends at the end of the previous line.
 - When an **inline end token** is encountered, snippet extraction ends at the beginning of the token.
 
+### `injectionToken`
+
+The `injectionToken` is the **exact string** which will be replaced by your snippet during injection. The snippet must follow immediately after the `injectionToken`.
+
+For example, if you have the following `injectionToken`:
+
+```json
+{
+  // Note the space character at the end
+  "injectionToken": "$snippet: "
+}
+```
+
+the following text would be replaced by a snippet called `hello-snippet`:
+
+```md
+$snippet: hello-snippet
+```
+
 ### `outputDir`
 
 The `outputDir` is the output directory for the documentation injected with snippets.
@@ -187,6 +206,8 @@ doc-snippets combine
 ```
 
 The `combine` command reads a `"doc-snippets"` section from a configuration file (by default this is `package.json`) and performs snippet extraction and injection, and outputs documentation with injected snippets into an `outputDir`.
+
+All configuration options can be overridden using `combine`'s command options.
 
 ### 'combine' command options
 

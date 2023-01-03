@@ -8,7 +8,7 @@ export function getSnippetCaptureRegExp(
   return new RegExp(getSnippetCapturePattern(startTokens, endTokens), "gm");
 }
 
-const nameCapturePattern = "([\\w-]+)";
+const nameCapturePattern = "([\\S]+)";
 const contentCapturePattern = "(?<content>[\\s\\S]+?)";
 const snippetNameToken = "{SNIPPET_NAME}";
 

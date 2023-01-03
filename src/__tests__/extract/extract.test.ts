@@ -1,6 +1,7 @@
 import path from "path";
 import { extractSnippets, extractSnippetsFromFile } from "../../lib/extract";
 import { ExtractionToken } from "../../lib/types";
+import { getSnippetCaptureRegExp } from "../../lib/utils/regexp";
 
 describe("Extract tests", () => {
   const samplesDir = path.join(__dirname, "samples");
@@ -20,11 +21,11 @@ describe("Extract tests", () => {
   const snippetStartToken: ExtractionToken = { pattern: "$start: " };
   const snippetEndToken: ExtractionToken = { pattern: "$end" };
   const inlineSnippetStartToken: ExtractionToken = {
-    pattern: "/* $start: {SNIPPET_NAME} */",
+    pattern: "/* #start: {SNIPPET_NAME} */",
     inline: true,
   };
   const inlineSnippetEndToken: ExtractionToken = {
-    pattern: "/* $end */",
+    pattern: "/* #end */",
     inline: true,
   };
 
@@ -85,7 +86,11 @@ describe("Extract tests", () => {
 
     it("should extract using both regular and inline tokens", async () => {
       const snippets: Record<string, string> = {};
-
+      const regex = getSnippetCaptureRegExp(
+        [snippetStartToken, inlineSnippetStartToken],
+        [inlineSnippetEndToken, snippetEndToken]
+      );
+      console.log(regex);
       await extractSnippetsFromFile(
         snippets,
         validRegularInlineTxtFilePath,
@@ -103,6 +108,7 @@ describe("Extract tests", () => {
       for (const name of expectedSnippetNames) {
         expect(snippets).toHaveProperty(name);
         expect(snippets[name]).not.toHaveLength(0);
+        expect(snippets[name]).toContain("and it extends to a new line");
       }
     });
   });

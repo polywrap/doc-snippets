@@ -28,6 +28,12 @@ yarn add -D doc-snippets
 - To inject a snippet:
   - `$snippet: snippet-name` - This gets replaced by the snippet with the given name.
 
+### The snippet name
+
+The snippet name is a string containing **any characters except whitespace**. 
+
+As soon as `doc-snippets` encounters any form of whitespace (space, tab, newline), the snippet name capture ends.
+
 ## Configuration
 
 The `doc-snippets` CLI is configured using a JSON file that contains a `doc-snippets` object. By default, this file is `package.json`.
@@ -134,13 +140,13 @@ For example, let's configure our extraction tokens as follows:
   //...
   "startTokens": [
     {
-      "pattern": "/* $start: {SNIPPET_NAME} */",
+      "pattern": "/* #start: {SNIPPET_NAME} */",
       "inline": true
     }
   ],
   "endTokens": [
     {
-      "pattern": "/* $end */",
+      "pattern": "/* #end */",
       "inline": true
     }
   ]
@@ -152,8 +158,8 @@ Note that there is a special token within the start token's `pattern` property: 
 In addition, let's assume that we have a file with the following code:
 
 ```typescript
-const greeting = /* $start: hello-inline-snippet */"Hello World!";
-console.log(greeting);/* $end */
+const greeting = /* #start: hello-inline-snippet */"Hello World!";
+console.log(greeting);/* #end */
 ```
 
 Snippet extraction would now yield a snippet named `hello-inline-snippet` with the following contents:
@@ -171,6 +177,40 @@ For reference:
 - When an **inline start token** is encountered, snippet extraction starts immediately after the token ends.
 - When a **regular end token** is encountered, snippet extraction ends at the end of the previous line.
 - When an **inline end token** is encountered, snippet extraction ends at the beginning of the token.
+
+**:warning: Regular and inline snippets containing the same substring :warning:**
+
+If we have the following configuration for our end tokens:
+
+```json
+"endTokens": [
+  {
+    "pattern": "$end"
+  }
+  {
+    "pattern": "/* $end */",
+    "inline": true
+  }
+],
+```
+
+the `$end` regular token will **always** match before the inline `/* $end */` token due to the way Regex matching works in Javascript.
+
+To avoid these collisions, make sure to specify inline extraction tokens which don't contain any of your regular injection tokens as exact substrings within them.
+
+An easy remedy for the above configuration is simply replacing `/* $end */` with `/* #end */`:
+
+```json
+"endTokens": [
+  {
+    "pattern": "$end"
+  }
+  {
+    "pattern": "/* #end */",
+    "inline": true
+  }
+],
+```
 
 ### `injectionToken`
 
@@ -245,7 +285,7 @@ const startTokens = [
     pattern: "$start: "
   },
   {
-    pattern: "/* $start: {SNIPPET_NAME} */",
+    pattern: "/* #start: {SNIPPET_NAME} */",
     inline: true
   }
 ];
@@ -255,7 +295,7 @@ const endTokens = [
     pattern: "$end"
   },
   {
-    pattern: "/* $end */",
+    pattern: "/* #end */",
     inline: true
   }
 ];

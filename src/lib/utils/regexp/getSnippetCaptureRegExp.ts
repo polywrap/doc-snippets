@@ -1,4 +1,4 @@
-import { escapeRegExp } from ".";
+import { escapeRegExp, snippetNameCapturePattern } from ".";
 import { ExtractionToken } from "../../types";
 
 export function getSnippetCaptureRegExp(
@@ -8,7 +8,6 @@ export function getSnippetCaptureRegExp(
   return new RegExp(getSnippetCapturePattern(startTokens, endTokens), "gm");
 }
 
-const nameCapturePattern = "([\\S]+)";
 const contentCapturePattern = "(?<content>[\\s\\S]+?)";
 const snippetNameToken = "{SNIPPET_NAME}";
 
@@ -69,7 +68,7 @@ function getEndTokenPattern(token: ExtractionToken): string {
 }
 
 function getRegularStartTokenPattern(token: string): string {
-  return `${escapeRegExp(token)}${nameCapturePattern}.*?\\n`;
+  return `${escapeRegExp(token)}${snippetNameCapturePattern}.*?\\n`;
 }
 
 function getRegularEndTokenPattern(token: string): string {
@@ -83,7 +82,7 @@ function getInlineStartTokenPattern(token: string): string {
   const tokenStart = token.substring(0, nameStartIdx);
   const tokenEnd = token.substring(nameEndIdx);
 
-  return `${escapeRegExp(tokenStart)}${nameCapturePattern}${escapeRegExp(
+  return `${escapeRegExp(tokenStart)}${snippetNameCapturePattern}${escapeRegExp(
     tokenEnd
   )}`;
 }

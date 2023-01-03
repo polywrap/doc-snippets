@@ -1,5 +1,6 @@
-import fs from "fs";
 import { getInjectionTokenCaptureRegExp } from "./utils/regexp";
+
+import fs from "fs";
 
 export async function injectSnippetsIntoFile(
   snippets: Record<string, string>,
@@ -8,12 +9,12 @@ export async function injectSnippetsIntoFile(
 ): Promise<void> {
   let contents = fs.readFileSync(filePath, "utf-8");
   let modified = false;
-  
+
   const injectionRegExp = getInjectionTokenCaptureRegExp(injectToken);
 
   let nextMatch: RegExpMatchArray | null = null;
 
-  while(nextMatch = contents.match(injectionRegExp)){
+  while ((nextMatch = contents.match(injectionRegExp))) {
     const snippetName = nextMatch[1];
 
     const snippetStartIdx = nextMatch.index as number; //Unless

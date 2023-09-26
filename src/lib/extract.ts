@@ -42,10 +42,12 @@ export async function extractSnippetsFromFile(
   );
 
   for (const snippet of foundSnippets) {
-    console.log("- Extract Snippet", snippet.name);
+    console.log(`- Extract Snippet ${snippet.name} in ${filePath}`);
 
     if (snippets[snippet.name]) {
-      throw Error(`Duplicate Snippet Definition: ${snippet.name}`);
+      throw Error(
+        `Duplicate Snippet Definition: ${snippet.name} in ${filePath}`
+      );
     }
 
     snippets[snippet.name] = snippet.contents;
